@@ -1,0 +1,73 @@
+sub qyery
+--query within the query is called sub-query
+--inner query wil exec first and outer query wil exec next, output of inner query wil be given to input of main query
+--we can use this sub qurery in select, from and where
+
+1. HOw to find max salary in employees table?
+select max(salary) from employees;
+
+2. How to find the min salary in employees table?
+select min(salary) from employees;
+
+3. How to find the third max salary in employees table?
+select salary, dense_rank()over(order by salary desc) drk from employees;
+
+select * from
+    (select salary, dense_rank()over(order by salary desc) drk from employees)
+where drk=3;
+
+4. How to find seond max salary in each department?
+select * from
+    (select salary, dense_rank()over(partition by department_id order by salary desc) drk from employees)
+where drk=3;
+
+5. How to find 4th min salary in each department?
+select salary, department_id from
+    (select salary, department_id, dense_rank()over(partition by department_id order by salary) drk from employees)
+where drk=4;
+
+6. How to fetch first record in a table?
+select * from employees where rownum=1;
+
+7. How to fetch first 10 records in a table?
+select * from employees where rownum<=10;
+
+8. How to fetch 10th record in a table?
+select * from 
+    (select e.*, rownum rn from employees e)
+where rn=10;
+
+9. How to fetch records between 11 to 20th in a table?
+select * from 
+    (select e.*, rownum rn from employees e)
+where rn between 11 and 20;
+
+10.How to fetch last record in a table?
+select * from 
+    (select * from employees order by rownum desc)
+where rownum=1;
+
+11. How to fetch even rows in a table?
+select * from
+    (select e.*, rownum rn from employees e)
+where mod(rn,2)=0;
+
+12. How to fetch odd rows in a table?
+select * from
+    (select e.*, rownum rn from employees e)
+where mod(rn,2)<>0;
+
+13. How to find employees who are working in neena department?
+select department_id from employees where first_name='Neena';
+select * from employees where department_id=90;
+
+
+select * from employees where department_id=(select department_id from employees where first_name='Neena');
+select * from employees where department_id in (select department_id from employees where first_name='Steven');
+
+14. How to find employees who are getting more than the average salary?
+select avg(salary) from employees;
+select * from employees where salary > 6461.831775700934579439252336448598130841;
+
+
+select * from employees where salary > (select avg(salary) from employees);
